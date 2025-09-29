@@ -77,4 +77,11 @@ def predict_instrument(model, audio_path):
     predicted_instrument = model.predict([features])
     print(f"予測された楽器: {predicted_instrument[0]}")
     return predicted_instrument[0]
+
+
+if __name__ == "__main__":
+  BASE_DIR = "/Users/mizuy/OneDrive/ドキュメント/seminar"
+  INSTRUMENT_DATA = os.path.join(BASE_DIR, "instruments")
+  SEPARATED_DATA = os.path.join(BASE_DIR, "separated")
+
   
