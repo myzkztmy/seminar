@@ -30,7 +30,9 @@ def extract_features(path, n_mfcc=40):
 def tempo(path):
   y, sr = librosa.load(path, sr=None)
   tempo_val, _ = librosa.beat.beat_track(y=y, sr=sr)
-  return tempo_val.item()
+  for lower, marking, description in reversed(TENPO_MARKINGS):
+    if tempo_val.item() >= lower:
+      return marking, description
 
 def load_instrument_data(data):
      
