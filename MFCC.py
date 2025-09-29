@@ -55,7 +55,7 @@ def load_instrument_data(data):
         file_path = os.path.join(folder, filename)
         file_paths.append(file_path)
         labels.append(label_name)
-    print(f"  {label_name}: 読み込み完了 ({len(os.listdir(folder))}個)")
+    print(f"{label_name}: 読み込み完了 ({len(os.listdir(folder))}個)")
 
   print(f"楽器データの読み込み完了 (計 {len(file_paths)}個)")
 
@@ -74,7 +74,7 @@ def load_instrument_data(data):
   return np.array(X), np.array(Y)
 
 def SVM_model(X, Y):
-  X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=random_state, stratify=Y)
+  X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
   
   print("SVMモデルの学習中…")
   model = svm.SVC(kernel='rbf', C=10, random_state=42)
@@ -102,8 +102,15 @@ if __name__ == "__main__":
   INSTRUMENT_DATA = os.path.join(BASE_DIR, "instruments")
   SEPARATED_DATA = os.path.join(BASE_DIR, "separated", "htdemucs_6s", "test_A")
 
-  drum = os.path.join(SEPARATED_DATA, "other.mp3")
+  drum = os.path.join(SEPARATED_DATA, "piano.mp3")
   bpm = tempo(drum)
 
   print(f"bpm: {bpm[0]:.0f}")
-  print(f"速度標語: {bpm[1]} ({bpm[2]}")
+  print(f"速度標語: {bpm[1]} ({bpm[2]})")
+
+  X_data, Y_labels = load_instrument_data(INSTRUMENT_DATA)
+
+  svm_model = None
+  if len(X_data) > 0:
+    svm_model, model_accuracy = SVM_model(X_data, Y_labels)
+
