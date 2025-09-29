@@ -116,17 +116,57 @@ def classical_check(vocal, separated_audio, svm_model):
         instrument_track.add(predict)
 
   print(f"検出された楽器タイプ: {', '.join(instrument_track) if instrument_track else 'なし'}")
-    
+
+def key_mode(audio_path):
+  y, sr = librosa.load(audio_path, sr=None)
+  chroma = librosa.feature.chroma_stft(y=y, sr=sr)
+  major_template = np.array([6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88])
+  minor_template = np.array([6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17])
+ 
+  mean_chroma = np.mean(chroma, axis=1)
+
+  keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+        
+  major_scores = []
+  minor_scores = []
+  
+  for i in range(12):
+      rotated_major_template = np.roll(major_template, i)
+      rotated_minor_template = np.roll(minor_template, i)
+      
+      major_scores.append(np.dot(mean_chroma, rotated_major_template))
+      minor_scores.append(np.dot(mean_chroma, rotated_minor_template))
+      
+  best_major_key_idx = np.argmax(major_scores)
+  best_minor_key_idx = np.argmax(minor_scores)
+  
+  if major_scores[best_major_key_idx] > minor_scores[best_minor_key_idx]:
+      estimated_key = keys[best_major_key_idx]
+      mode = "長調 (Major)"
+  else:
+      estimated_key = keys[best_minor_key_idx]
+      mode = "短調 (Minor)"
+      
+  return estimated_key, mode
+
+
 if __name__ == "__main__":
   BASE_DIR = "/Users/mizuy/OneDrive/ドキュメント/seminar"
   INSTRUMENT_DATA = os.path.join(BASE_DIR, "instruments")
   SEPARATED_DATA = os.path.join(BASE_DIR, "separated", "htdemucs_6s", "test_B")
+  AUDIO_FILE = os.path.join(BASE_DIR, "test_B.mp3")
 
-  drum = os.path.join(SEPARATED_DATA, "piano.mp3")
+  print("\n=== 楽曲詳細 ===")
+  drum = os.path.join(SEPARATED_DATA, "drums.mp3")
   bpm = tempo(drum)
 
   print(f"bpm: {bpm[0]:.0f}")
   print(f"速度標語: {bpm[1]} ({bpm[2]})")
+
+  key, mode = key_mode(AUDIO_FILE)
+  if key and mode:
+    print(f"ルート音: {key}")
+    print(f"曲調: {mode}")
 
   X_data, Y_labels = load_instrument_data(INSTRUMENT_DATA)
 
