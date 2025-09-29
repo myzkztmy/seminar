@@ -102,10 +102,25 @@ def isvocal(vocal_path, threshold_rms=0.005):
   rms = librosa.feature.rms(y=y).mean()
   return rms > threshold_rms
 
+def classical_check(vocal, separated_audio, svm_model):
+  if vocal:
+    return "声楽曲"
+  
+  instrument_track = set()
+
+  for track_file in ["piano.mp3", "other.mp3"]:
+    track_path = os.path.join(separated_audio, track_file)
+    if os.path.exists(track_path):
+      predict = predict_instrument(svm_model, track_path)
+      if predict and predict != "その他":
+        instrument_track.add(predict)
+
+  print(f"検出された楽器タイプ: {', '.join(instrument_track) if instrument_track else 'なし'}")
+    
 if __name__ == "__main__":
   BASE_DIR = "/Users/mizuy/OneDrive/ドキュメント/seminar"
   INSTRUMENT_DATA = os.path.join(BASE_DIR, "instruments")
-  SEPARATED_DATA = os.path.join(BASE_DIR, "separated", "htdemucs_6s", "test_A")
+  SEPARATED_DATA = os.path.join(BASE_DIR, "separated", "htdemucs_6s", "test_B")
 
   drum = os.path.join(SEPARATED_DATA, "piano.mp3")
   bpm = tempo(drum)
@@ -119,3 +134,12 @@ if __name__ == "__main__":
   if len(X_data) > 0:
     svm_model, model_accuracy = SVM_model(X_data, Y_labels)
 
+  if svm_model:
+    print("\n=== クラシック音楽判定 ===")
+
+    vocal_path = os.path.join(SEPARATED_DATA, "vocals.mp3")
+    is_vocal = isvocal(vocal_path)
+    print(f"歌声検出: {'あり' if is_vocal else 'なし'}")
+
+    classical_genre = classical_check(is_vocal, SEPARATED_DATA, svm_model)
+    print(f"クラシック音楽判定: {classical_genre if classical_genre else '判定不能'}")
