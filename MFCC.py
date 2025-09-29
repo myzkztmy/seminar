@@ -5,27 +5,16 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 
-def extract_features(path):
+def extract_features(path, n_mfcc=40):
     y, sr = librosa.load(path, sr=None)
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
     mfcc_ave = np.mean(mfcc.T, axis=0)
     return mfcc_ave
 
 def tempo(path):
     y, sr = librosa.load(path, sr=None)
-    tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
-
-audio_path = "/Users/mizuy/OneDrive/ドキュメント/zemi/separated/htdemucs_6s/test_B/drums.mp3"
-bpm = tempo(audio_path)
-
-print(f"推定テンポ: {bpm: .2f} BPM")
-
-if bpm < 100:
-   print("ゆっくり")
-elif 100 <= bpm < 140:
-   print("普通")
-else:
-   print("はやい")
+    tempo_val, _ = librosa.beat.beat_track(y=y, sr=sr)
+    return tempo_val.item()
 
 data = "/Users/mizuy/OneDrive/ドキュメント/seminar/instruments"
 
