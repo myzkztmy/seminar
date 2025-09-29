@@ -5,6 +5,28 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 
+def extract_features(path):
+    y, sr = librosa.load(path, sr=None)
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
+    mfcc_ave = np.mean(mfcc.T, axis=0)
+    return mfcc_ave
+
+def tempo(path):
+    y, sr = librosa.load(path, sr=None)
+    tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+
+audio_path = "/Users/mizuy/OneDrive/ドキュメント/zemi/separated/htdemucs_6s/test_B/drums.mp3"
+bpm = tempo(audio_path)
+
+print(f"推定テンポ: {bpm: .2f} BPM")
+
+if bpm < 100:
+   print("ゆっくり")
+elif 100 <= bpm < 140:
+   print("普通")
+else:
+   print("はやい")
+
 data = "/Users/mizuy/OneDrive/ドキュメント/zemi/instruments"
 
 woodwind_data = os.path.join(data, "woodwind")
@@ -37,11 +59,14 @@ print(f"取得したデータ: {len(file)}個")
 
 print("MFCC抽出中…")
 
-def extract_features(path):
+
+
+
+
+def brightness(path):
     y, sr = librosa.load(path, sr=None)
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
-    mfcc_ave = np.mean(mfcc.T, axis=0)
-    return mfcc_ave
+    spectral_centroid = librosa.feature.spectral_centroid(y=y, sr=sr)
+    return np.mean(spectral_centroid)
 
 X = []
 Y = []
