@@ -5,6 +5,22 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 
+TENPO_MARKINGS = [
+    (0, "Larghissimo", "非常に遅く"),
+    (40, "Grave", "重々しく"),
+    (41, "Largo", "ゆったりと"),                     
+    (49, "Lento", "遅く"),
+    (53, "Adagio", "ゆるやかに"),
+    (57, "Andante", "歩くような速さで"),
+    (73, "Moderato", "中くらいの速さで"),
+    (97, "Allegretto", "やや速く、いくらか陽気に"),
+    (109, "Allegro", "速く、陽気に"),
+    (120, "Vivo", "生き生きと、活発に"),
+    (133, "Vivace", "活発に、きびきびと"),
+    (161, "Presto", "急速に"),
+    (185, "Prestissimo", "きわめて急速に")
+]
+
 def extract_features(path, n_mfcc=40):
   y, sr = librosa.load(path, sr=None)
   mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
