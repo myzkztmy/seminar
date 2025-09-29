@@ -87,7 +87,6 @@ def SVM_model(X, Y):
 
   return model, accuracy
 
-
 def predict_instrument(model, audio_path):
   print(f"楽器予測を開始: {audio_path}")
   features = extract_features(audio_path)
@@ -96,6 +95,12 @@ def predict_instrument(model, audio_path):
     print(f"予測された楽器: {predicted_instrument[0]}")
     return predicted_instrument[0]
 
+def isvocal(vocal_path, threshold_rms=0.005):
+  if not os.path.exists(vocal_path):
+    return False
+  y, sr = librosa.load(vocal_path, sr=None)
+  rms = librosa.feature.rms(y=y).mean()
+  return rms > threshold_rms
 
 if __name__ == "__main__":
   BASE_DIR = "/Users/mizuy/OneDrive/ドキュメント/seminar"
