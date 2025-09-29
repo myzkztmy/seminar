@@ -32,7 +32,7 @@ def tempo(path):
   tempo_val, _ = librosa.beat.beat_track(y=y, sr=sr)
   for lower, marking, description in reversed(TENPO_MARKINGS):
     if tempo_val.item() >= lower:
-      return marking, description
+      return tempo_val.item(), marking, description
 
 def load_instrument_data(data):
      
@@ -100,6 +100,10 @@ def predict_instrument(model, audio_path):
 if __name__ == "__main__":
   BASE_DIR = "/Users/mizuy/OneDrive/ドキュメント/seminar"
   INSTRUMENT_DATA = os.path.join(BASE_DIR, "instruments")
-  SEPARATED_DATA = os.path.join(BASE_DIR, "separated")
+  SEPARATED_DATA = os.path.join(BASE_DIR, "separated", "htdemucs_6s", "test_A")
 
-  
+  drum = os.path.join(SEPARATED_DATA, "other.mp3")
+  bpm = tempo(drum)
+
+  print(f"bpm: {bpm[0]:.0f}")
+  print(f"速度標語: {bpm[1]} ({bpm[2]}")
