@@ -27,7 +27,7 @@ elif 100 <= bpm < 140:
 else:
    print("はやい")
 
-data = "/Users/mizuy/OneDrive/ドキュメント/zemi/instruments"
+data = "/Users/mizuy/OneDrive/ドキュメント/seminar/instruments"
 
 woodwind_data = os.path.join(data, "woodwind")
 strings_data = os.path.join(data, "strings")
@@ -60,14 +60,6 @@ print(f"取得したデータ: {len(file)}個")
 print("MFCC抽出中…")
 
 
-
-
-
-def brightness(path):
-    y, sr = librosa.load(path, sr=None)
-    spectral_centroid = librosa.feature.spectral_centroid(y=y, sr=sr)
-    return np.mean(spectral_centroid)
-
 X = []
 Y = []
 
@@ -95,7 +87,7 @@ accuracy = accuracy_score(Y_test, Y_pred)
 
 print(f"精度: {accuracy * 100:.2f}%")
 
-audio_path = "/Users/mizuy/OneDrive/ドキュメント/zemi/separated/htdemucs_6s/test_B/other.mp3"
+audio_path = "/Users/mizuy/OneDrive/ドキュメント/seminar/separated/htdemucs_6s/test_B/other.mp3"
 
 print("楽器予測を開始")
 
