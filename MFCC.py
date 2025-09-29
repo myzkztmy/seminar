@@ -41,8 +41,8 @@ def load_instrument_data(data):
 
   instrument_categories = {
     'strings': '弦楽器',
-    'woodwind': '木管楽器', # 既存のwoodwindを木管楽器として扱う
-    'brass': '金管楽器'      # 新しく追加する金管楽器データ
+    'woodwind': '木管楽器',
+    'brass': '金管楽器'
   }
 
   print("楽器データ読み込み開始")
