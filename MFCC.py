@@ -45,41 +45,41 @@ def load_instrument_data(data):
     'brass': '金管楽器'
   }
 
-  print("楽器データ読み込み開始")
+  # print("楽器データ読み込み開始")
   for folder, label_name in instrument_categories.items():
     folder = os.path.join(data, folder)
     
-    print(f"{label_name}: 読み込み中…")
+    # print(f"{label_name}: 読み込み中…")
     for filename in os.listdir(folder):
       if filename.endswith('.mp3'):
         file_path = os.path.join(folder, filename)
         file_paths.append(file_path)
         labels.append(label_name)
-    print(f"{label_name}: 読み込み完了 ({len(os.listdir(folder))}個)")
+    # print(f"{label_name}: 読み込み完了 ({len(os.listdir(folder))}個)")
 
-  print(f"楽器データの読み込み完了 (計 {len(file_paths)}個)")
+  # print(f"楽器データの読み込み完了 (計 {len(file_paths)}個)")
 
   X = []
   Y = []
 
-  print("MFCC抽出中…")
+  # print("MFCC抽出中…")
 
   for i, file_path in enumerate(file_paths):
       features = extract_features(file_path)
       X.append(features)
       Y.append(labels[i])
 
-  print("MFCC抽出完了")
+  # print("MFCC抽出完了")
 
   return np.array(X), np.array(Y)
 
 def SVM_model(X, Y):
   X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
   
-  print("SVMモデルの学習中…")
+  # print("SVMモデルの学習中…")
   model = svm.SVC(kernel='rbf', C=10, random_state=42)
   model.fit(X_train, Y_train)
-  print("SVMモデルの学習完了")
+  # print("SVMモデルの学習完了")
 
   Y_pred = model.predict(X_test)
   accuracy = accuracy_score(Y_test, Y_pred)
@@ -88,7 +88,7 @@ def SVM_model(X, Y):
   return model, accuracy
 
 def predict_instrument(model, audio_path):
-  print(f"楽器予測を開始: {audio_path}")
+  # print(f"楽器予測を開始: {audio_path}")
   features = extract_features(audio_path)
   if features is not None:
     predicted_instrument = model.predict([features])
@@ -156,7 +156,7 @@ if __name__ == "__main__":
   SEPARATED_DATA = os.path.join(BASE_DIR, "separated", "htdemucs_6s", "test_B")
   AUDIO_FILE = os.path.join(BASE_DIR, "test_B.mp3")
 
-  print("\n=== 楽曲詳細 ===")
+  # print("\n=== 楽曲詳細 ===")
   drum = os.path.join(SEPARATED_DATA, "drums.mp3")
   bpm = tempo(drum)
 
@@ -175,11 +175,11 @@ if __name__ == "__main__":
     svm_model, model_accuracy = SVM_model(X_data, Y_labels)
 
   if svm_model:
-    print("\n=== クラシック音楽判定 ===")
+    # print("\n=== クラシック音楽判定 ===")
 
     vocal_path = os.path.join(SEPARATED_DATA, "vocals.mp3")
     is_vocal = isvocal(vocal_path)
-    print(f"歌声検出: {'あり' if is_vocal else 'なし'}")
+    # print(f"歌声検出: {'あり' if is_vocal else 'なし'}")
 
     classical_genre = classical_check(is_vocal, SEPARATED_DATA, svm_model)
-    print(f"クラシック音楽判定: {classical_genre if classical_genre else '判定不能'}")
+    # print(f"クラシック音楽判定: {classical_genre if classical_genre else '判定不能'}")
